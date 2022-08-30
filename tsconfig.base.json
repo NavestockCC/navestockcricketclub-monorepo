@@ -15,9 +15,6 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@navestockcricketclub-monorepo/api-interfaces": [
-        "libs/api-interfaces/src/index.ts"
-      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

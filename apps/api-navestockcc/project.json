@@ -1,0 +1,94 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/api-navestockcc/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/api-navestockcc",
+        "main": "apps/api-navestockcc/src/main.ts",
+        "tsConfig": "apps/api-navestockcc/tsconfig.app.json",
+        "assets": ["apps/api-navestockcc/src/assets"],
+        "externalDependencies": "all",
+        "outputFileName": "index.js",
+        "generatePackageJson": true,
+        "verbose": true
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/api-navestockcc/src/environments/environment.ts",
+              "with": "apps/api-navestockcc/src/environments/environment.prod.ts"
+            }
+          ]
+        },
+        "test": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/api-navestockcc/src/environments/environment.prod.ts",
+              "with": "apps/api-navestockcc/src/environments/environment.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "api-navestockcc:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "api-navestockcc:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/api-navestockcc/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/api-navestockcc"],
+      "options": {
+        "jestConfig": "apps/api-navestockcc/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "firebase-emulator":{
+      "executor": "nx:run-commands",
+      "options": {
+        "commands":[
+          "lsof -t -i:9099 -i:5001 -i:8080 -i:5002 -i:8085 -i:9199 | xargs kill -9",
+          "nx run api-navestockcc:build:production",
+          "firebase emulators:start"
+        ],
+        "parallel": false
+      }
+    },
+    "deploy-functions": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "nx run api-navestockcc:build:production",
+          "firebase deploy --only functions"
+        ],
+        "color": true,
+        "parallel": false
+      }
+    }       
+  },
+  "tags": []
+}

@@ -2,8 +2,7 @@
   "$schema": "./node_modules/nx/schemas/workspace-schema.json",
   "version": 2,
   "projects": {
-    "api": "apps/api",
-    "api-interfaces": "libs/api-interfaces",
+    "api-navestockcc": "apps/api-navestockcc",
     "navestock-website": "apps/navestock-website",
     "navestock-website-e2e": "apps/navestock-website-e2e"
   }
