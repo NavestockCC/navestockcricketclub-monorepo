@@ -14,7 +14,8 @@
         "externalDependencies": "all",
         "outputFileName": "index.js",
         "generatePackageJson": true,
-        "verbose": true
+        "verbose": true,
+        "watch": false
       },
       "configurations": {
         "production": {
@@ -75,6 +76,7 @@
           "nx run api-navestockcc:build:production",
           "firebase emulators:start"
         ],
+        "color": true,
         "parallel": false
       }
     },

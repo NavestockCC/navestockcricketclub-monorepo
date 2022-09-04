@@ -1,16 +1,55 @@
-// The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
-import * as functions from 'firebase-functions'
-import * as admin from 'firebase-admin'
+import * as functions from 'firebase-functions';
+import {initializeApp}from 'firebase-admin/app';
+
+/**  
+ * Import:Test message functions 
+ * */
+import * as AddMessage from './app/add-message/helloNavestock_http';
+import * as ListenMessagePubSub from './app/add-message/listenHelloNavestock-pubsub';
+
+/**  
+ * Import: PlayCricket Match List Import Functions
+ * */
+
+import * as HttpTriggerPlayCricetImport from './app/playcricket-MatchListImport/http/httpTriggerPubSubPlayCricketImport'
+import * as GetPlayCricketMatchListPubSub from './app/playcricket-MatchListImport/pubsub/getPlayCricketMatchList';
 
 
-// The Firebase Admin SDK to access Firestore.
-admin.initializeApp();
+/**  
+ * Import: PlayCricket Match Detail Import Functions
 
-// Take the text parameter passed to this HTTP endpoint and insert it into 
-// Firestore under the path /messages/:documentId/original
-exports.addMessage = functions
+import * as ComparePlayCricketMatchDetailPubSub from './playcricke-MatchDetailImport/pubsub/playcricketmatchdetail';
+import * as GetPlayCricketMatchDetailPubSub from './playcricke-MatchDetailImport/pubsub/getPlayCricketMatchDetails';
+ * */
+
+
+export const helloWorld = functions
 .region('europe-west2')
-.https.onRequest(async (req, res) => {
-    // Send back a json message 
-    res.send('Hello Navestock. APIs rule in production!!!!')
+.https.onRequest((request, response) => {
+  response.send('Hello from Navestock Cricket Club API');
+});
+
+initializeApp({
+  //credential: admin.credential.applicationDefault(),
   });
+
+/** 
+ *  Test message functions 
+ * */
+export const addMessage = AddMessage.helloNavestock;
+export const addMessagePubSub = ListenMessagePubSub.listenHelloNavestock;
+
+/** 
+ * PlayCricket MatchList Import Functions : Import matchlist from PlayCricket API 
+ * */
+
+export const httpTriggerPlayCricetImport = HttpTriggerPlayCricetImport.httpPublishPlayCricetSeasonToImport;
+export const getPlayCricketMatchListPubSub = GetPlayCricketMatchListPubSub.getPlayCricketMatchListPubSub;
+
+
+/** 
+ * PlayCricket Match Detail Import Functions 
+
+export const comparePlayCricketMatchDetailPubSub = ComparePlayCricketMatchDetailPubSub.comparePlayCricketMatchDetailPubSub;
+export const getPlayCricketMatchDetailPubSub = GetPlayCricketMatchDetailPubSub.getPlayCricketMatchDetailPubSub;
+ * */
