@@ -1,10 +1,22 @@
 This is the Google Pub/Sub fake.
 Implementation may be incomplete or differ from the real system.
-Aug 30, 2022 1:52:24 PM com.google.cloud.pubsub.testing.v1.Main main
+Sept 04, 2022 5:12:42 PM com.google.cloud.pubsub.testing.v1.Main main
 INFO: IAM integration is disabled. IAM policy methods and ACL checks are not supported
-Aug 30, 2022 1:52:24 PM io.gapi.emulators.netty.NettyUtil applyJava7LongHostnameWorkaround
+Sept 04, 2022 5:12:42 PM io.gapi.emulators.netty.NettyUtil applyJava7LongHostnameWorkaround
 INFO: Unable to apply Java 7 long hostname workaround.
-Aug 30, 2022 1:52:24 PM com.google.cloud.pubsub.testing.v1.Main main
+Sept 04, 2022 5:12:42 PM com.google.cloud.pubsub.testing.v1.Main main
 INFO: Server started, listening on 8085
-Aug 30, 2022 1:52:25 PM io.gapi.emulators.grpc.GrpcServer$3 operationComplete
+Sept 04, 2022 5:12:42 PM io.gapi.emulators.grpc.GrpcServer$3 operationComplete
 INFO: Adding handler(s) to newly registered Channel.
+Sept 04, 2022 5:12:47 PM io.gapi.emulators.grpc.GrpcServer$3 operationComplete
+INFO: Adding handler(s) to newly registered Channel.
+Sept 04, 2022 5:12:47 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Sept 04, 2022 5:13:06 PM io.gapi.emulators.grpc.GrpcServer$3 operationComplete
+INFO: Adding handler(s) to newly registered Channel.
+Sept 04, 2022 5:13:06 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Sept 04, 2022 5:13:12 PM io.gapi.emulators.grpc.GrpcServer$3 operationComplete
+INFO: Adding handler(s) to newly registered Channel.
+Sept 04, 2022 5:13:12 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
