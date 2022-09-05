@@ -11,8 +11,7 @@ import * as functions from 'firebase-functions';
 import { PlayCricketMatchListAPICall } from '../../services/PlayCricketAPICall';
 import { MatchListDB } from '../services/MatchList_DB_service';
 import { PublishPubSubMessage } from '../../services/PublishPubSubMessage';
-
-import { map,} from 'rxjs/operators'
+import { map } from 'rxjs/operators'
 
 const matchListDB = new MatchListDB();
 
@@ -43,17 +42,27 @@ export const getPlayCricketMatchListPubSub = functions
         }))
       ).subscribe(
         mlData => {
-            matchListDB.addMatchlist(mlData.data);
+            matchListDB.addMatchlist(mlData.data)
+            .subscribe({
+              next: (v) =>
+                functions.logger.log(
+                  `Document Set at MatchList.${mlData.data.season}: ${JSON.stringify(v)}`
+                ),
+              error: (e) => {
+                functions.logger.error(`ERROR updating MatchList.${mlData.data.season}: ${e}`);
+              },
+              complete: () => functions.logger.log(`Firestore set documents to ${mlData.data.season}`),
+            });
             psMessage.publishPubSubMessage('PlayCricket_Match_List_Data', mlData.data)
             .subscribe({
               next: (v) =>
-                console.log(
+                functions.logger.log(
                   `PubSub Message ${v} published to topic PlayCricket_Match_List_Data`
                 ),
               error: (e) => {
-                console.error(`error code ${e.code}, details: ${e.details}`);
+                functions.logger.error(`error code ${e.code}, details: ${e.details}`);
               },
-              complete: () => console.info('published to topic complete'),
+              complete: () => functions.logger.log('published to topic:PlayCricket_Match_List_Data complete'),
             });
         }
       );
