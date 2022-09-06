@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@navestockcricketclub/match-interfaces": [
+        "libs/match-interfaces/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

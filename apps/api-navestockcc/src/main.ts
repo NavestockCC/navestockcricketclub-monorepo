@@ -17,10 +17,11 @@ import * as GetPlayCricketMatchListPubSub from './app/playcricket-MatchListImpor
 
 /**  
  * Import: PlayCricket Match Detail Import Functions
+* */
 
-import * as ComparePlayCricketMatchDetailPubSub from './playcricke-MatchDetailImport/pubsub/playcricketmatchdetail';
-import * as GetPlayCricketMatchDetailPubSub from './playcricke-MatchDetailImport/pubsub/getPlayCricketMatchDetails';
- * */
+import * as ComparePlayCricketMatchDetailPubSub from './app/playcricke-MatchDetailImport/pubsub/playcricketmatchdetail';
+import * as GetPlayCricketMatchDetailPubSub from './app/playcricke-MatchDetailImport/pubsub/getPlayCricketMatchDetails';
+ 
 
 
 export const helloWorld = functions
@@ -49,7 +50,7 @@ export const getPlayCricketMatchListPubSub = GetPlayCricketMatchListPubSub.getPl
 
 /** 
  * PlayCricket Match Detail Import Functions 
+ * */
 
 export const comparePlayCricketMatchDetailPubSub = ComparePlayCricketMatchDetailPubSub.comparePlayCricketMatchDetailPubSub;
 export const getPlayCricketMatchDetailPubSub = GetPlayCricketMatchDetailPubSub.getPlayCricketMatchDetailPubSub;
- * */

@@ -54,12 +54,13 @@ export class PublishPubSubMessage {
     const pubsubTopic = pubSubClient.topic(pubsubTopicName, options);
 
     if (typeof messagedata === 'string' || messagedata instanceof String) {
-      console.log('messagedata is typeof string');
       dataBuffer = Buffer.from(messagedata);
     } else if (typeof messagedata === 'object') {
-      console.log('messagedata is typeof object');
       dataBuffer = Buffer.from(JSON.stringify(messagedata));
+    } else if (typeof messagedata === 'number' || typeof messagedata === 'boolean'){
+      dataBuffer = Buffer.from(messagedata.toString());
     }
+
 
     const publishTopic = from(pubsubTopic.publishMessage({ data: dataBuffer }));
     return publishTopic

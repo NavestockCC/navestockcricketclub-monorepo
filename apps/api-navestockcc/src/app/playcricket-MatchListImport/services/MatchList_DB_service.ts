@@ -1,4 +1,4 @@
-import * as admin from 'firebase-admin';
+import {getFirestore} from 'firebase-admin/firestore';
 import { from} from 'rxjs';
 
 export class MatchListDB {
@@ -7,7 +7,7 @@ export class MatchListDB {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public addMatchlist(matchlist: any) {
-    const afs = admin.firestore();
+    const afs = getFirestore();
     const collectionDB = 'MatchList';
 
 
