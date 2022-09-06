@@ -6,7 +6,7 @@
  */
 
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin'
+import {getFirestore} from 'firebase-admin/firestore'
 
 
 export const listenHelloNavestock = functions
@@ -18,7 +18,7 @@ export const listenHelloNavestock = functions
             console.error(new Error('E_getPCML_1: msg param not found'));
             return 'listenHelloNavestock_PubSub: excution ERROR!!!';
         } else {
-                    const afs = admin.firestore(); // Crearte an instanse of Firestore
+                    const afs = getFirestore(); // Crearte an instanse of Firestore
                     afs.collection('TEST').add(msgPayload.json);
 
         return 'listenHelloNavestock_PubSub: excution completed sucsesfully';

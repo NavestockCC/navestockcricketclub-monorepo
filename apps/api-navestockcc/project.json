@@ -7,6 +7,7 @@
       "executor": "@nrwl/node:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "deleteOutputPath": true,
         "outputPath": "dist/apps/api-navestockcc",
         "main": "apps/api-navestockcc/src/main.ts",
         "tsConfig": "apps/api-navestockcc/tsconfig.app.json",
@@ -14,6 +15,8 @@
         "externalDependencies": "all",
         "outputFileName": "index.js",
         "generatePackageJson": true,
+        "updateBuildableProjectDepsInPackageJson": true,
+        "buildableProjectDepsInPackageJsonType": "dependencies",
         "verbose": true,
         "watch": false
       },
@@ -68,10 +71,10 @@
         "passWithNoTests": true
       }
     },
-    "firebase-emulator":{
+    "firebase-emulator": {
       "executor": "nx:run-commands",
       "options": {
-        "commands":[
+        "commands": [
           "lsof -t -i:9099 -i:5001 -i:8080 -i:5002 -i:8085 -i:9199 | xargs kill -9",
           "nx run api-navestockcc:build:production",
           "firebase emulators:start"
@@ -90,7 +93,7 @@
         "color": true,
         "parallel": false
       }
-    }       
+    }
   },
   "tags": []
 }

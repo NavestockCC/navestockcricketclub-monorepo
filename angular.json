@@ -3,6 +3,7 @@
   "version": 2,
   "projects": {
     "api-navestockcc": "apps/api-navestockcc",
+    "match-interfaces": "libs/match-interfaces",
     "navestock-website": "apps/navestock-website",
     "navestock-website-e2e": "apps/navestock-website-e2e"
   }
