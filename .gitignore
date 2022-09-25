@@ -44,4 +44,3 @@ apps/api-navestockcc/src/environments/PlayCricket.ts
 firebase-debug.log
 firestore-debug.log
 pubsub-debug.log
-firestore-debug.log
