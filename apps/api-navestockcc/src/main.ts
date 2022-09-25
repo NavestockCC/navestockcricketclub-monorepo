@@ -19,8 +19,9 @@ import * as GetPlayCricketMatchListPubSub from './app/playcricket-MatchListImpor
  * Import: PlayCricket Match Detail Import Functions
 * */
 
-import * as ComparePlayCricketMatchDetailPubSub from './app/playcricke-MatchDetailImport/pubsub/playcricketmatchdetail';
+import * as ComparePlayCricketMatchDetailPubSub from './app/playcricke-MatchDetailImport/pubsub/playcricketMatchListCompare';
 import * as GetPlayCricketMatchDetailPubSub from './app/playcricke-MatchDetailImport/pubsub/getPlayCricketMatchDetails';
+import * as HttpPublishPlayCricetMatchToImport from './app/playcricke-MatchDetailImport/http/httpTriggerPubSubPlayCricketImport'
  
 
 
@@ -52,5 +53,6 @@ export const getPlayCricketMatchListPubSub = GetPlayCricketMatchListPubSub.getPl
  * PlayCricket Match Detail Import Functions 
  * */
 
-export const comparePlayCricketMatchDetailPubSub = ComparePlayCricketMatchDetailPubSub.comparePlayCricketMatchDetailPubSub;
+export const comparePlayCricketMatchListubSub = ComparePlayCricketMatchDetailPubSub.comparePlayCricketMatchListPubSub;
 export const getPlayCricketMatchDetailPubSub = GetPlayCricketMatchDetailPubSub.getPlayCricketMatchDetailPubSub;
+export const httpPublishPlayCricetMatchToImport = HttpPublishPlayCricetMatchToImport.httpPublishPlayCricetMatchToImport;

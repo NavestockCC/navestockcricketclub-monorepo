@@ -1,12 +1,10 @@
-import {getFirestore} from 'firebase-admin/firestore';
-import { from} from 'rxjs';
+import {getFirestore, WriteResult} from 'firebase-admin/firestore';
+import { Observable,from} from 'rxjs';
 
 export class MatchListDB {
-  /**
-   * addMatchlistmatchlist: object : void
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public addMatchlist(matchlist: any) {
+
+
+  public addMatchlist(matchlist: any): Observable<WriteResult> {
     const afs = getFirestore();
     const collectionDB = 'MatchList';
 

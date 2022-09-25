@@ -1,4 +1,4 @@
-import {Timestamp}from 'firebase-admin/firestore';
+import { Timestamp } from 'firebase-admin/firestore';
 import { map, Observable } from 'rxjs';
 import * as stripTags from 'striptags'
 
@@ -8,7 +8,7 @@ import {
   Innings,
   Bat,
   Bowl,
-  FallOfWickets,
+  FallOfWickets
 } from '@navestockcricketclub/match-interfaces';
 
 export class MatchInterfaceServices {
@@ -87,32 +87,74 @@ export class MatchInterfaceServices {
     // Create JS Date
     const dateObject = new Date(
       splitDate[2] +
-        '-' +
-        splitDate[1] +
-        '-' +
-        splitDate[0] +
-        'T' +
-        timeString +
-        ':00+01:00'
+      '-' +
+      splitDate[1] +
+      '-' +
+      splitDate[0] +
+      'T' +
+      timeString +
+      ':00+01:00'
     );
 
     //Convert JS Date to Firestore Timestamp
-    return Timestamp.fromDate(dateObject); 
+    return Timestamp.fromDate(dateObject);
   }
 
   /**
    * Updates match description
-   * @param match
+   * @param match <any>
    * @returns match description
    */
-  public updateMatchDescription(
-    match: Observable<any>
-  ): Observable<MatchDescription> {
-    return match.pipe(
-      //Transform API Response to MatchDescription
-      map((resp) => {
+  public updateMatchDescription(match: any): MatchDescription {
+
+    let mdo: any = {};
+    //Transform API respone to MatchDescription
+    for (const [k, v] of Object.entries(match)) {
+      if (typeof v != 'object') {
+        if (v != undefined && v != '') {
+          mdo[k] = v;
+        }
+      }
+    }
+
+    // Remove all HTM tags from match_notes
+    if (mdo.match_notes != undefined) {
+      mdo.match_notes = stripTags(mdo.match_notes);
+    }
+
+    //Set Navestock and Opposition team attributes
+    mdo = this.setNavestockAndOppositionAttributes(mdo);
+
+    //Set date fields to Firebase Timestamps
+    if (mdo.last_updated != undefined) {
+      mdo.last_updated_timestamp =
+        this.updateStringDateToFirebaseTimestamp(mdo.last_updated);
+    }
+    if (mdo.match_date != undefined) {
+      mdo.match_date_timestamp =
+        this.updateStringDateToFirebaseTimestamp(
+          mdo.match_date,
+          mdo.match_time
+        );
+    }
+
+    return mdo
+  }
+
+  public updateMatchDescription_Observable(match: any): Observable<MatchDescription> {
+
+    const matchObservable = new Observable((sbscriber) => {
+      sbscriber.next(match);
+      sbscriber.complete;
+    }
+    );
+
+
+    return matchObservable.pipe(
+      //Transform API matchonse to MatchDescription
+      map((match) => {
         const mdo = {};
-        for (const [k, v] of Object.entries(resp)) {
+        for (const [k, v] of Object.entries(match)) {
           if (typeof v != 'object') {
             if (v != undefined && v != '') {
               mdo[k] = v;
@@ -153,32 +195,83 @@ export class MatchInterfaceServices {
   /**
    * innings
    */
-  public innings(match: Observable<any>): Observable<Innings[]> {
-    return match.pipe(
-      map((resp) => {
-        if (Array.isArray(resp.innings) && resp.innings.length) {
-          const teamsData = {};
-          teamsData[resp.home_team_id] = {
-            team_id: resp.home_team_id,
-            team_name: resp.home_team_name,
-            club_id: resp.home_club_id,
-            club_name: resp.home_club_name,
-            opposition_id: resp.away_team_id,
-            match_id: resp.id
-          };
-          teamsData[resp.away_team_id] = {
-            team_id: resp.away_team_id,
-            team_name: resp.away_team_name,
-            club_id: resp.away_club_id,
-            club_name: resp.away_club_name,
-            opposition_id: resp.home_team_id,
-            match_id: resp.id
-          }; 
+  public innings(match: any): Innings[] {
 
-          for (let i = 0; i < resp.innings.length ; i++){
-            resp.innings[i]['teams'] = teamsData;
+    let mdo: [] = [];
+
+
+    if (Array.isArray(match.innings) && match.innings.length) {
+      const teamsData = {};
+      teamsData[match.home_team_id] = {
+        team_id: match.home_team_id,
+        team_name: match.home_team_name,
+        club_id: match.home_club_id,
+        club_name: match.home_club_name,
+        opposition_id: match.away_team_id,
+        match_id: match.id
+      };
+      teamsData[match.away_team_id] = {
+        team_id: match.away_team_id,
+        team_name: match.away_team_name,
+        club_id: match.away_club_id,
+        club_name: match.away_club_name,
+        opposition_id: match.home_team_id,
+        match_id: match.id
+      };
+
+      for (let i = 0; i < match.innings.length; i++) {
+        match.innings[i]['teams'] = teamsData;
+      }
+      mdo = match.innings;
+    }
+    const iArray: Innings[] = [];
+    if (mdo != undefined && Array.isArray(mdo) && mdo.length) {
+      mdo.forEach((item) =>
+        iArray.push({
+          description: this.inningsDescription(item),
+          bat: this.inningsBat(item),
+          bowl: this.inningBowl(item),
+          fow: this.inningFallOfWickets(item),
+        } as Innings)
+      );
+    }
+
+    return iArray;
+  }
+
+  public innings_Observable(match: any): Observable<Innings[]> {
+    const matchObservable = new Observable((sbscriber) => {
+      sbscriber.next(match);
+      sbscriber.complete;
+    }
+    );
+
+    return matchObservable.pipe(
+      map(match => match as any),
+      map((match) => {
+        if (Array.isArray(match.innings) && match.innings.length) {
+          const teamsData = {};
+          teamsData[match.home_team_id] = {
+            team_id: match.home_team_id,
+            team_name: match.home_team_name,
+            club_id: match.home_club_id,
+            club_name: match.home_club_name,
+            opposition_id: match.away_team_id,
+            match_id: match.id
+          };
+          teamsData[match.away_team_id] = {
+            team_id: match.away_team_id,
+            team_name: match.away_team_name,
+            club_id: match.away_club_id,
+            club_name: match.away_club_name,
+            opposition_id: match.home_team_id,
+            match_id: match.id
+          };
+
+          for (let i = 0; i < match.innings.length; i++) {
+            match.innings[i]['teams'] = teamsData;
           }
-          return resp.innings as unknown[];
+          return match.innings as unknown[];
         } else {
           return [] as unknown[];
         }
@@ -308,64 +401,64 @@ export class MatchInterfaceServices {
     attributeValue: string | number | boolean | unknown,
     attributeKey: string
   ): string | number | boolean {
-    const interfaceObjectSamples: { bat: Bat, bowl: Bowl, fow: FallOfWickets, description:InningsDescription } =
-      {
-        bat: {
-          position: 0,
-          batsman_name: '',
-          batsman_id: '',
-          how_out: '',
-          fielder_name: '',
-          fielder_id: '',
-          bowler_name: '',
-          bowler_id: '',
-          runs: 0,
-          fours: 0,
-          sixes: 0,
-          balls: 0,
-        },
-        bowl: {
-          bowler_name: '',
-          bowler_id: '',
-          overs: 0,
-          maidens: 0,
-          runs: 0,
-          wides: 0,
-          wickets: 0,
-          no_balls: 0,
-        },
-        fow: {
-          runs: 0,
-          wickets: 0,
-          batsman_out_name: '',
-          batsman_out_id: '',
-          batsman_in_name: '',
-          batsman_in_id: '',
-          batsman_in_runs: 0,
-        },
-        description:{
-          team_batting_name: "",
-          team_batting_id: "",
-          team_bowling_name: "",
-          team_bowling_id: "",
-          innings_number: 0,
-          extra_byes: 0,
-          extra_leg_byes: 0,
-          extra_wides: 0,
-          extra_no_balls: 0,
-          extra_penalty_runs: 0,
-          penalties_runs_awarded_in_other_innings: 0,
-          total_extras: 0,
-          runs: 0,
-          wickets: 0,
-          overs: 0,
-          balls: 0,
-          declared: true,
-          revised_target_runs: 0,
-          revised_target_overs: 0,
-          revised_target_balls: 0
-        }
-      };
+    const interfaceObjectSamples: { bat: Bat, bowl: Bowl, fow: FallOfWickets, description: InningsDescription } =
+    {
+      bat: {
+        position: 0,
+        batsman_name: '',
+        batsman_id: '',
+        how_out: '',
+        fielder_name: '',
+        fielder_id: '',
+        bowler_name: '',
+        bowler_id: '',
+        runs: 0,
+        fours: 0,
+        sixes: 0,
+        balls: 0,
+      },
+      bowl: {
+        bowler_name: '',
+        bowler_id: '',
+        overs: 0,
+        maidens: 0,
+        runs: 0,
+        wides: 0,
+        wickets: 0,
+        no_balls: 0,
+      },
+      fow: {
+        runs: 0,
+        wickets: 0,
+        batsman_out_name: '',
+        batsman_out_id: '',
+        batsman_in_name: '',
+        batsman_in_id: '',
+        batsman_in_runs: 0,
+      },
+      description: {
+        team_batting_name: "",
+        team_batting_id: "",
+        team_bowling_name: "",
+        team_bowling_id: "",
+        innings_number: 0,
+        extra_byes: 0,
+        extra_leg_byes: 0,
+        extra_wides: 0,
+        extra_no_balls: 0,
+        extra_penalty_runs: 0,
+        penalties_runs_awarded_in_other_innings: 0,
+        total_extras: 0,
+        runs: 0,
+        wickets: 0,
+        overs: 0,
+        balls: 0,
+        declared: true,
+        revised_target_runs: 0,
+        revised_target_overs: 0,
+        revised_target_balls: 0
+      }
+    };
 
     let returnAttributeValue;
     const interfaceToTest = interfaceObjectSamples[interfaceObject];

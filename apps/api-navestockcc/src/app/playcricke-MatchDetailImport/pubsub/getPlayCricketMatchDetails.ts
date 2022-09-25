@@ -1,39 +1,44 @@
 
 import * as functions from 'firebase-functions';
-import { connect, forkJoin, map } from 'rxjs';
+import {lastValueFrom, map, switchMap} from 'rxjs';
 
 import { MatchInterfaceServices } from "../services/match.interface.service";
 import { PlayCricketMatchListAPICall } from '../../services/PlayCricketAPICall';
 import { MatchListImport } from "../services/matchImportDB.service";
+import { Match } from '@navestockcricketclub/match-interfaces';
 
 
 
-export const getPlayCricketMatchDetailPubSub = functions.pubsub
+
+export const getPlayCricketMatchDetailPubSub = functions
+.region('europe-west2')
+.pubsub
   .topic('Match_Detail_Import')
-  .onPublish((msgPayload) => {
-    try {
+  .onPublish(async (msgPayload) => {
+   
         const MLI= new MatchListImport();
-        const matchID = msgPayload.json;
         const PCAPICall = new PlayCricketMatchListAPICall();
         const matchInterfaceServices = new MatchInterfaceServices();
- 
-        PCAPICall.getPlayCricketApiMatch_Detail(matchID.toString()).pipe(
-          map((resp) => {return resp.data.match_details[0];}),
-          connect((APIResp$) => forkJoin({
+        let matchID = '';
+        if(typeof msgPayload.json.matchid === 'string'){
+          matchID = msgPayload.json.matchid;
+      } else if(typeof msgPayload.json.matchid === 'number'){
+          matchID = msgPayload.json.matchid.toString();
+        } 
+
+
+
+
+
+  const getPCMatchDetail = PCAPICall.getPlayCricketApiMatch_Detail(matchID).pipe(
+          map((resp) => resp.data.match_details[0]),
+          map((APIResp$) => ({
             description: matchInterfaceServices.updateMatchDescription(APIResp$),
             innings: matchInterfaceServices.innings(APIResp$)
-          }))
-        ).subscribe(
-          mData => {
-            MLI.updateMatchDetails(mData);
-          }
-        );
-
-        return {function: 'getPlayCricketMatchDetailPubSub', status: 'success'}
-    } catch (error) {
-        functions.logger.warn(error)
-        return {function: 'getPlayCricketMatchDetailPubSub', status: 'error'}
-    }
-
+            } as Match)),
+          switchMap(mData => MLI.updateMatchDetails(mData)),
+        )
+        
+  return await lastValueFrom(getPCMatchDetail);      
     
-  });
+  })

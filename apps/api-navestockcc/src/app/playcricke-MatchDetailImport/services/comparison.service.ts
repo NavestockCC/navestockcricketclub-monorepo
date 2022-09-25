@@ -1,49 +1,61 @@
 // Imports
-
-
+import { Observable, from, map, filter, tap } from 'rxjs';
+import { MatchList } from '@navestockcricketclub/match-interfaces';
 export class ComparisonService {
-
-
-
-/**
- * Matchs list comparison orchestrator
- * @param pubSubMatchListData
- * @param currentMatchListData
- * @returns number[] of match id's for updated matches
- * @returns empty number[] if season attributes in array are not equal
- * @returns empty number[] if all items in the array are found and all items found are equal 
- */
-public matchListComparisonOrchestrator(pubSubMatchListData: any, currentMatchListData: any):number[] {
-    const matchtoUpdate: number[] = [];
- try {
-
-/* 
-** Validate if seasons in the comparison are equal
-** If seasons are equal do comparison of arrays's
-** If seasons are not equal don't do comparison of arrays 
-*/
-if(pubSubMatchListData !== currentMatchListData){
-
-/* 
-** Compare Arrays by iterating over PubSub Match List to find which items have been updated or added
-** First validation id new items. findIndex returns -1 if item not found in array 
-** Second validation if item was found validate if last_updated attribute is equal
-*/
-for (let i = 0; i < pubSubMatchListData.matches.length; i++) {
-    const matchIndex = currentMatchListData.matches.findIndex(match => match.id === pubSubMatchListData.matches[i].id)
-    if (matchIndex === -1) {
-        matchtoUpdate.push(pubSubMatchListData.matches[i].id);
-    }else if(pubSubMatchListData.matches[i].last_updated !== currentMatchListData.matches[matchIndex].last_updated){
-        matchtoUpdate.push(pubSubMatchListData.matches[i].id);
-        }
-    }
-}
-} catch (error) {
-     console.error(error);
-}
-
-return matchtoUpdate;
-}
-
+  /**
+   * Matchs list comparison orchestrator
+   * @param pubSubMatchListData
+   * @param currentMatchListData
+   * @returns observable<number> stream of match id's for matches to update
+   * @returns completes without emitting a value:
+   * 1. if season attributes in array are equal
+   * 2. if all items in the array are found and all items found are equal
+   */
+  public matchListComparisonOrchestrator(
+    pubSubMatchListData: MatchList,
+    currentMatchListData: MatchList
+  ): Observable<number> {
     
+    let compObserver:Observable<number>;
+    
+    
+    
+    /*
+     ** Validate if seasons in the comparison are equal
+     ** If seasons are not equal do comparison of arrays's
+     ** If seasons are equal don't do comparison of arrays
+     */
+  if (pubSubMatchListData == currentMatchListData) {
+    /*
+    ** Matchlist are equal, create observable and complete observable
+    */
+    compObserver = new Observable((subscriber) => {
+          subscriber.complete();
+        });
+  } else {
+    compObserver = from(pubSubMatchListData.matches) // create observable from array
+    .pipe(
+        map((m) => {
+        let respVal = undefined;    
+        const findMatchId =  currentMatchListData.matches.find(
+            (currentMatch) => currentMatch.id === m.id
+          )
+        if(findMatchId === undefined){
+            respVal = m;
+        } else if(findMatchId.last_updated !== m.last_updated){
+            respVal = m;
+        } else {
+            respVal = undefined;
+        }
+        return respVal;
+        }
+        ),
+        filter((mtchDescription) => mtchDescription !== undefined),
+        map((mtchDescription) => mtchDescription.id),
+      );
+    }
+  
+return compObserver;
+
 }
+} 
