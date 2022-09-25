@@ -21,12 +21,20 @@ export const getPlayCricketMatchListPubSub = functions
   .onPublish(async (msgPayload) => {
     // Retrieve Season from PubSub: Match_List_Import
     let seasonToImport: string;
-    if (msgPayload.json.season === undefined) {
-      seasonToImport = new Date().getFullYear().toString();
-    } else {
-      seasonToImport = msgPayload.json.season;
-    }
 
+    if ('season' in msgPayload.json === false || msgPayload.json.season === undefined){
+      seasonToImport = new Date().getFullYear().toString();
+    }
+    else if(typeof msgPayload.json.season  === 'string') {
+      seasonToImport = msgPayload.json.season;
+    } 
+    else if (typeof msgPayload.json.season  === 'number'){
+      seasonToImport = msgPayload.json.season.toString();
+    } 
+    else {
+      seasonToImport = new Date().getFullYear().toString();
+    } 
+ 
     const PCAPICall = new PlayCricketMatchListAPICall();
     const psMessage = new PublishPubSubMessage();
     const matchListDB = new MatchListDB();
