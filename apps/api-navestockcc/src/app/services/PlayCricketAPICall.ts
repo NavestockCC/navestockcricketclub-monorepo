@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { from, map, Observable } from 'rxjs';
 import * as playcricketCert from "../../environments/PlayCricket";
-import { MatchList, MatchlistPlaycricketAPIRespone } from '@navestockcricketclub/match-interfaces'
+import {MatchlistPlaycricketAPIRespone } from '@navestockcricketclub/match-interfaces'
 
 const playcricketCredentials = {
     "apitoken" : playcricketCert.firebaseAuthData.api_token,

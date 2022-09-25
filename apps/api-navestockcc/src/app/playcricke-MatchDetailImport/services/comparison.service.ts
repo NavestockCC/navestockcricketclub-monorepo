@@ -1,5 +1,5 @@
 // Imports
-import { Observable, from, map, filter, tap } from 'rxjs';
+import { Observable, from, map, filter } from 'rxjs';
 import { MatchList } from '@navestockcricketclub/match-interfaces';
 export class ComparisonService {
   /**

@@ -4,7 +4,7 @@ import { MatchList } from '@navestockcricketclub/match-interfaces';
 import { ComparisonService } from '../services/comparison.service';
 import { MatchListImport } from '../services/matchImportDB.service';
 import { PublishPubSubMessage } from '../../services/PublishPubSubMessage';
-import { mergeAll, mergeMap, map, tap, concat, lastValueFrom, forkJoin } from 'rxjs';
+import {  mergeMap, map, concat, lastValueFrom } from 'rxjs';
 /**
  * PubSub trigger to compare MatchList from PlayCricket with MatchList last imported
  * Publishes a list of PubSub messages for matches which need updating
