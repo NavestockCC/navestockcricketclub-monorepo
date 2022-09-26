@@ -1,5 +1,5 @@
 
-import {getFirestore} from 'firebase-admin/firestore';
+import {getFirestore, WriteResult} from 'firebase-admin/firestore';
 import { from, map, Observable } from 'rxjs';
 
 import { Match, MatchList } from '@navestockcricketclub/match-interfaces';
@@ -8,14 +8,6 @@ export class MatchListImport {
     
     
         afs = getFirestore();
- 
-        /*
-constructor(){
-    this.afs.settings({
-        ignoreUndefinedProperties: true
-      });
-}
-*/
 
    /**
     * Gets match list import data
@@ -47,22 +39,25 @@ constructor(){
 
 
 /**
- * Updates match details
- * @param match 
+ * Sets match list import data
+ * @param matchList 
+ * @param seasonImport 
+ * @returns firebase WriteResult
  */
- public setMatchListImportData(matchList:MatchList, seasonImport:string):void {
+public setMatchListImportData(matchList:MatchList, seasonImport:string):Observable<WriteResult> {
 
     const matchListImportDoc = this.afs.collection('MatchListImport').doc(seasonImport)
-    matchListImportDoc.set(matchList, { merge: true });
+    return from(matchListImportDoc.set(matchList, { merge: true }));
 }    
 
 /**
  * Updates match details
  * @param match 
+ * @returns match details 
  */
-public updateMatchDetails(match:Match):void {
+public updateMatchDetails(match:Match):Observable<WriteResult>  {
     const matchDetailDoc = this.afs.collection('Fixtures').doc(match.description.id.toString());
-    matchDetailDoc.set(match, { merge: true });
+    return from(matchDetailDoc.set(match, { merge: true }));
     
 }
 

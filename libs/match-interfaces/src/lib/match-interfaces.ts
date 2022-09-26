@@ -1,6 +1,8 @@
 import {Timestamp} from 'firebase-admin/firestore';
 
 export { 
+  MatchlistPlaycricketAPIRespone,
+  MatchDetailPlaycricketAPIRespone,
   MatchList, 
   Match, 
   MatchDescription,
@@ -13,11 +15,38 @@ export {
   Player };
 
 /**
+ * @description Interface describing the data returned by the getPlayCricketApiMatch_List
+ * @field {string} status - axios http return status code
+ * @field {string} statusText - axios http return status description
+ * @field { season: string, matches: MatchDescription[] } data - data returned by the http call
+ */
+interface MatchlistPlaycricketAPIRespone{
+  status: number;
+  statusText: string;
+  data: { season: string, matches: MatchDescription[] };
+}
+
+/**
+ * @description Interface describing the data returned by the getPlayCricketApiMatch_Detail
+ * @field {string} status - axios http return status code
+ * @field {string} statusText - axios http return status description
+ * @field {match_details: any[]} data - data returned by the http call
+ */
+ interface MatchDetailPlaycricketAPIRespone{
+  status: number;
+  statusText: string;
+  data: {match_details: any[]};
+}
+
+
+/**
  * Match list
+ * @field {number} season - number representing the season year
+ * @field {Match[]} matches - array of {Match} the be played in a year
  */
 interface MatchList {
   season: string;
-  matches: Match[];
+  matches: MatchDescription[];
 }
 /**
  * @interface Match

@@ -1,5 +1,6 @@
 import { PubSub } from '@google-cloud/pubsub';
 import { catchError, from, map, throwError, retry, switchMap } from 'rxjs';
+import * as functions from 'firebase-functions';
 
 export class PublishPubSubMessage {
   /**
@@ -68,7 +69,8 @@ export class PublishPubSubMessage {
         map((r) => r),
         retry(2),
         catchError((error) => {
-          if(error.code === 5) {
+          functions.logger.debug(`pubsubTopic: ${error}`)
+          if(error.code == 5) {
           const managedError = from(pubSubClient.createTopic(pubsubTopicName))
           .pipe(
             switchMap( () => from(pubsubTopic.publishMessage({ data: dataBuffer }))),

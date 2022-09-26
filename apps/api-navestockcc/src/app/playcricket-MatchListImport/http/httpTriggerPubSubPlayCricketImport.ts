@@ -1,12 +1,11 @@
 /**
  * Navestock Firebase Function
  * @author Lefras Coetzee
- * @description Function to trigger Import of Play Crricket Data.
+ * @description Function to trigger Import of Play Crricket Match List Data.
  * @description The function publishes {season: ??} to Match_List_Import PubSup topic
  * @description matchListImport Function subscribes to Match_List_Import. Will use the season data to start import of PlayCricket Data.
  *
  */
-
 import * as functions from 'firebase-functions';
 import { PublishPubSubMessage } from '../../services/PublishPubSubMessage'
 
@@ -30,14 +29,14 @@ export const httpPublishPlayCricetSeasonToImport = functions
       publishMes.publishPubSubMessage('Match_List_Import', data)
       .subscribe({
         next: (v) => {
-          console.log( `PubSub Message ${v} published to topic Match_List_Import`);
+          functions.logger.debug( `PubSub Message ${v} published to topic Match_List_Import`);
           res.send(`Message ${v} published to Match_List_Import`);
         },
         error: (e) => {
-          console.error(`error code ${e.code}, details: ${e.details}`);
-          res.send(`error code ${e.code}, details: ${e.details}`);
+          functions.logger.debug(JSON.stringify(e));
+          res.send(JSON.stringify(e));
         },
-        complete: () => console.info('published to topic Match_List_Import complete'),
+        complete: () => functions.logger.debug('published to topic Match_List_Import complete'),
       });
   }
 );
