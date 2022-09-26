@@ -5,7 +5,7 @@ import * as functions from 'firebase-functions';
 import { PlayCricketMatchListAPICall } from '../../services/PlayCricketAPICall';
 import { MatchListDB } from '../services/MatchList_DB_service';
 import { PublishPubSubMessage } from '../../services/PublishPubSubMessage';
-import { map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { MatchList } from '@navestockcricketclub/match-interfaces';
 import { forkJoin, lastValueFrom } from 'rxjs';
 
@@ -21,6 +21,7 @@ import { forkJoin, lastValueFrom } from 'rxjs';
  *  3. map the payload data to interface type MatchList
  *  4. publishes the MatchList data to PlayCricket_Match_List_Data PubSub
  *  5. writes the MatchList data to Firestore collection MatchList.<season>
+ * @description Max: 150 matches in a season !!!
  */
 export const getPlayCricketMatchListPubSub = functions
   .region('europe-west2')
@@ -62,7 +63,10 @@ export const getPlayCricketMatchListPubSub = functions
     const getPCMactchLlistPS = PCAPICall.getPlayCricketApiMatch_List(
       seasonToImport
     ).pipe(
+      filter(ApiResp => 'data' in ApiResp === true),
       map((ApiResp) => ApiResp.data),
+      filter(ApiResp => ApiResp.matches !== undefined || ApiResp.matches.length > 0 ),
+      filter(ApiResp => ApiResp.matches.length < 151),
       map(
         (APIResp) =>
           ({
@@ -84,5 +88,8 @@ export const getPlayCricketMatchListPubSub = functions
      * Resolve function performing the asynchronous processing
      * (also known as "background functions") by returning a JavaScript promise.
      */
-    return await lastValueFrom(getPCMactchLlistPS);
+    return await lastValueFrom(getPCMactchLlistPS)
+                  .catch(
+                    e => functions.logger.debug(`getPlayCricketMatchListPubSub: ${e}`)
+                  );
   });
