@@ -82,7 +82,9 @@ export const comparePlayCricketMatchListPubSub = functions
  * Resolve function performing the asynchronous processing 
  * (also known as "background functions") by returning a JavaScript promise.
  */
-    return await lastValueFrom(compareMatchList);
+    return await lastValueFrom(compareMatchList).catch(
+      e => functions.logger.debug(`comparePlayCricketMatchListPubSub: ${e}`)
+    );
 
 
   });

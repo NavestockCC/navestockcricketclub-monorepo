@@ -60,5 +60,7 @@ export const getPlayCricketMatchDetailPubSub = functions
      * Resolve function performing the asynchronous processing
      * (also known as "background functions") by returning a JavaScript promise.
      */
-    return await lastValueFrom(getPCMatchDetail);
+    return await lastValueFrom(getPCMatchDetail).catch(
+      e => functions.logger.debug(`getPlayCricketMatchDetailPubSub: ${e}`)
+    );
   });
