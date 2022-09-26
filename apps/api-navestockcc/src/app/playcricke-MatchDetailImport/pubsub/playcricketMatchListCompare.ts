@@ -1,3 +1,14 @@
+ /**
+ * Navestock Firebase Function
+ * @author Lefras Coetzee
+ * @description BackgroundFunction to trigger by publishing data<MatchList> to [PlayCricket_Match_List_Data] PubSub Topic.
+ * @description The function takes the PubSub MatchList data and compares it to 
+ * @description the last imported MatchList data stored in the Firestore collection MatchListImport.
+ * @description The Match ID of all new or changed matches found in the comparison will be published to Match_Detail_Import PubSub Topic
+ * @description After all new or changed matches Match ID's where published the MatchList data is written to the Firestore collection MatchListImport
+ */
+
+
 import * as functions from 'firebase-functions';
 import { MatchList } from '@navestockcricketclub/match-interfaces';
 
@@ -11,6 +22,7 @@ import {  mergeMap, map, concat, lastValueFrom } from 'rxjs';
  */
 export const comparePlayCricketMatchListPubSub = functions
 .region('europe-west2')
+.runWith({memory: '512MB', timeoutSeconds: 300})
 .pubsub
   .topic('PlayCricket_Match_List_Data')
   .onPublish(async (msgPayload) => {
@@ -22,6 +34,16 @@ export const comparePlayCricketMatchListPubSub = functions
       const mlDB = new MatchListImport();
       const pubSubWrite = new PublishPubSubMessage();
 
+
+ /**
+  * Observable which runs the comparison between the 
+  * PlayCricket API payload data and 
+  * the MatchListImport data stored in teh DB
+  * 
+  * For all  new or changed matches the Observible will 
+  * publish an JSON object {"matchid": <matchToImport>}
+  * to Match_Detail_Import PubSub
+  */     
       const matchesToUpdate = mlDB
         .getMatchListImportData(seasonToImport)
         .pipe(
@@ -37,15 +59,29 @@ export const comparePlayCricketMatchListPubSub = functions
           )
         );
 
+
+
+ /**
+  * Observabel to write the PlayCricket API payload data to
+  * the Firestore collection MatchListImport
+  */       
       const  matchListImportDB = mlDB
       .setMatchListImportData(payloadData, seasonToImport);
 
 
+/**
+ * Execute the comparison and Firetore update Observables 
+ */
     const compareMatchList = concat(
       matchesToUpdate,
       matchListImportDB
   );
 
+
+/**
+ * Resolve function performing the asynchronous processing 
+ * (also known as "background functions") by returning a JavaScript promise.
+ */
     return await lastValueFrom(compareMatchList);
 
 

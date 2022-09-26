@@ -1,7 +1,7 @@
 /**
  * Navestock Firebase Function
  * @author Lefras Coetzee
- * @description Function to trigger Import of Play Crricket Data.
+ * @description Function to trigger Import of Play Crricket Match List Data.
  * @description The function publishes {season: ??} to Match_List_Import PubSup topic
  * @description matchListImport Function subscribes to Match_List_Import. Will use the season data to start import of PlayCricket Data.
  *

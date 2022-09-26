@@ -8,14 +8,6 @@ export class MatchListImport {
     
     
         afs = getFirestore();
- 
-        /*
-constructor(){
-    this.afs.settings({
-        ignoreUndefinedProperties: true
-      });
-}
-*/
 
    /**
     * Gets match list import data

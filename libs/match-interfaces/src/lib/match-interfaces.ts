@@ -2,6 +2,7 @@ import {Timestamp} from 'firebase-admin/firestore';
 
 export { 
   MatchlistPlaycricketAPIRespone,
+  MatchDetailPlaycricketAPIRespone,
   MatchList, 
   Match, 
   MatchDescription,
@@ -25,6 +26,17 @@ interface MatchlistPlaycricketAPIRespone{
   data: { season: string, matches: MatchDescription[] };
 }
 
+/**
+ * @description Interface describing the data returned by the getPlayCricketApiMatch_Detail
+ * @field {string} status - axios http return status code
+ * @field {string} statusText - axios http return status description
+ * @field {match_details: any[]} data - data returned by the http call
+ */
+ interface MatchDetailPlaycricketAPIRespone{
+  status: number;
+  statusText: string;
+  data: {match_details: any[]};
+}
 
 
 /**
