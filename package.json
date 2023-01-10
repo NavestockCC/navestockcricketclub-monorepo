@@ -24,10 +24,11 @@
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
-    "@nrwl/angular": "14.5.10",
+    "@nrwl/angular": "^15.4.5",
     "axios": "^0.27.2",
+    "blurhash": "^2.0.4",
     "firebase-admin": "^11.0.1",
-    "firebase-functions": "^3.22.0",
+    "firebase-functions": "^4.1.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.5.0",
     "striptags": "^3.2.0",
@@ -35,7 +36,7 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~14.1.1",
+    "@angular-devkit/build-angular": "^14.2.10",
     "@angular-eslint/eslint-plugin": "~14.0.0",
     "@angular-eslint/eslint-plugin-template": "~14.0.0",
     "@angular-eslint/template-parser": "~14.0.0",

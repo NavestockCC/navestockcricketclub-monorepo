@@ -65,6 +65,10 @@ export class MatchInterfaceServices {
     return returnVal;
   }
 
+  private setSeason(matchDate: string): string{
+    return matchDate.substr(matchDate.length-4, 4);
+  }
+
   /**
    * Updates string date to firebase timestamp
    * @param dateString
@@ -122,6 +126,11 @@ export class MatchInterfaceServices {
       mdo.match_notes = stripTags(mdo.match_notes);
     }
 
+    //Set the Season
+    if (mdo.match_date != undefined) {
+      mdo.season = this.setSeason(mdo.match_date);
+    }
+
     //Set Navestock and Opposition team attributes
     mdo = this.setNavestockAndOppositionAttributes(mdo);
 
@@ -141,6 +150,15 @@ export class MatchInterfaceServices {
     return mdo
   }
 
+  
+  /**
+   * Observabe version of the updateMatchDescription function
+   * @date 1/7/2023 - 4:32:02 PM
+   *
+   * @public
+   * @param {*} match
+   * @returns {Observable<MatchDescription>}
+   */
   public updateMatchDescription_Observable(match: any): Observable<MatchDescription> {
 
     const matchObservable = new Observable((sbscriber) => {
@@ -170,6 +188,13 @@ export class MatchInterfaceServices {
         }
         return mtchData as MatchDescription;
       }),
+      //Set the Season attribute from match_date
+      map((mtchData) => {
+        if (mtchData.match_date != undefined) {
+          mtchData.season = this.setSeason(mtchData.match_date);
+        }
+        return mtchData as MatchDescription;
+    }),
       //Set Navestock and Opposition team attributes
       map((mtchData) => {
         return this.setNavestockAndOppositionAttributes(mtchData);
@@ -192,8 +217,16 @@ export class MatchInterfaceServices {
     );
   }
 
+
   /**
-   * innings
+   * Parse and Array of innings from the Match Object
+   * Enrich the innings data with home & away team information
+   * Format the innings data into Innings intrface specification
+   * @date 1/7/2023 - 4:37:27 PM
+   *
+   * @public
+   * @param {*} match
+   * @returns {Innings[]}
    */
   public innings(match: any): Innings[] {
 
@@ -239,7 +272,7 @@ export class MatchInterfaceServices {
     return iArray;
   }
 
-  public innings_Observable(match: any): Observable<Innings[]> {
+  public innings_Observable(match: unknown): Observable<Innings[]> {
     const matchObservable = new Observable((sbscriber) => {
       sbscriber.next(match);
       sbscriber.complete;
@@ -291,6 +324,16 @@ export class MatchInterfaceServices {
     );
   }
 
+  
+  /**
+   * Parse innings data into {InningsDescription} interface
+   * Enrich Innings description with attributes for teams and clubs
+   * @date 1/7/2023 - 4:47:31 PM
+   *
+   * @private
+   * @param {*} inningsData
+   * @returns {InningsDescription}
+   */
   private inningsDescription(inningsData: any): InningsDescription {
     const ido = {};
     for (const [k, v] of Object.entries(inningsData)) {
@@ -312,6 +355,16 @@ export class MatchInterfaceServices {
     return ido as InningsDescription;
   }
 
+  
+  /**
+   * Parse innings data into {Bat} interface
+   * Enrich Innings description with attributes for teams and clubs
+   * @date 1/7/2023 - 4:49:33 PM
+   *
+   * @private
+   * @param {*} inningsData
+   * @returns {Bat[]}
+   */
   private inningsBat(inningsData: any): Bat[] {
     const ido: Bat[] = [];
     if (Array.isArray(inningsData.bat) && inningsData.bat.length) {
@@ -325,6 +378,13 @@ export class MatchInterfaceServices {
           }
         }
         //Add additional attributes for teams and clubs
+        idbo['type'] = 'bat';
+        if('batsman_id' in idbo){
+          idbo['player_id'] = idbo['batsman_id'];
+        }
+        if('batsman_name' in idbo){
+          idbo['player_name'] = idbo['batsman_name'];
+        }
         idbo['club_id'] = inningsData.teams[inningsData['team_batting_id']].club_id;
         idbo['club_name'] = inningsData.teams[inningsData['team_batting_id']].club_name;
         idbo['team_id'] = inningsData.teams[inningsData['team_batting_id']].team_id;
@@ -340,6 +400,15 @@ export class MatchInterfaceServices {
     return ido;
   }
 
+    /**
+   * Parse innings data into {Bowl} interface
+   * Enrich Innings description with attributes for teams and clubs
+   * @date 1/7/2023 - 4:49:33 PM
+   *
+   * @private
+   * @param {*} inningsData
+   * @returns {Bowl[]}
+   */
   private inningBowl(inningsData: any): Bowl[] {
     const ido: Bowl[] = [];
     if (Array.isArray(inningsData.bowl) && inningsData.bowl.length) {
@@ -353,6 +422,13 @@ export class MatchInterfaceServices {
           }
         }
         //Add additional attributes for teams and clubs
+        idbo['type'] = 'bowl';
+        if('bowler_id' in idbo){
+          idbo['player_id'] = idbo['bowler_id'];
+        }
+        if('bowler_name' in idbo){
+          idbo['player_name'] = idbo['bowler_name'];
+        }
         idbo['club_batting_id'] = inningsData.teams[inningsData['team_batting_id']].club_id;
         idbo['club_batting_name'] = inningsData.teams[inningsData['team_batting_id']].club_name;
         idbo['team_batting_id'] = inningsData.teams[inningsData['team_batting_id']].team_id;
@@ -368,6 +444,15 @@ export class MatchInterfaceServices {
     return ido;
   }
 
+      /**
+   * Parse innings data into {FallOfWickets} interface
+   * Enrich Innings description with attributes for teams and clubs
+   * @date 1/7/2023 - 4:49:33 PM
+   *
+   * @private
+   * @param {*} inningsData
+   * @returns {FallOfWickets[]}
+   */
   private inningFallOfWickets(inningsData: any): FallOfWickets[] {
     const ido: FallOfWickets[] = [];
     if (Array.isArray(inningsData.fow) && inningsData.fow.length) {
@@ -396,6 +481,18 @@ export class MatchInterfaceServices {
     return ido;
   }
 
+
+  
+  /**
+   * Ensure attributes are of the correct type according to the interface specification
+   * @date 1/7/2023 - 4:53:12 PM
+   *
+   * @private
+   * @param {string} interfaceObject
+   * @param {(string | number | boolean | unknown)} attributeValue
+   * @param {string} attributeKey
+   * @returns {(string | number | boolean)}
+   */
   private attributeTypeCorrection(
     interfaceObject: string,
     attributeValue: string | number | boolean | unknown,

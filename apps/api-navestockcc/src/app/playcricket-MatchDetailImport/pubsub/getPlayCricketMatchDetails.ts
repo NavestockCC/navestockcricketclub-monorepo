@@ -8,18 +8,20 @@
 
 
 import * as functions from 'firebase-functions';
-import { lastValueFrom, map, switchMap } from 'rxjs';
+import { forkJoin, lastValueFrom, map, switchMap } from 'rxjs';
 
 import { MatchInterfaceServices } from '../services/match.interface.service';
 import { PlayCricketMatchListAPICall } from '../../services/PlayCricketAPICall';
 import { MatchListImport } from '../services/matchImportDB.service';
 import { Match } from '@navestockcricketclub/match-interfaces';
+import { PublishPubSubMessage } from '../../services/PublishPubSubMessage';
 
 export const getPlayCricketMatchDetailPubSub = functions
   .region('europe-west2')
   .runWith({ memory: '128MB', timeoutSeconds: 60 })
   .pubsub.topic('Match_Detail_Import')
   .onPublish(async (msgPayload) => {
+    const psMessage = new PublishPubSubMessage();
     const MLI = new MatchListImport();
     const PCAPICall = new PlayCricketMatchListAPICall();
     const matchInterfaceServices = new MatchInterfaceServices();
@@ -53,7 +55,15 @@ export const getPlayCricketMatchDetailPubSub = functions
             innings: matchInterfaceServices.innings(APIResp$),
           } as Match)
       ),
-      switchMap((mData) => MLI.updateMatchDetails(mData))
+      switchMap((mData) =>
+      forkJoin({
+        matchDetailPubsubPublish: psMessage.publishPubSubMessage(
+          'PlayCricket_Match_Details_Data',
+          mData
+        ),
+        matchDetailDBWrite: MLI.updateMatchDetails(mData),
+      })
+    )
     );
 
     /**

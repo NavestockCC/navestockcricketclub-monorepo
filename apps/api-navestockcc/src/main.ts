@@ -19,10 +19,15 @@ import * as GetPlayCricketMatchListPubSub from './app/playcricket-MatchListImpor
  * Import: PlayCricket Match Detail Import Functions
 * */
 
-import * as ComparePlayCricketMatchDetailPubSub from './app/playcricke-MatchDetailImport/pubsub/playcricketMatchListCompare';
-import * as GetPlayCricketMatchDetailPubSub from './app/playcricke-MatchDetailImport/pubsub/getPlayCricketMatchDetails';
-import * as HttpPublishPlayCricetMatchToImport from './app/playcricke-MatchDetailImport/http/httpTriggerPubSubPlayCricketImport'
- 
+import * as ComparePlayCricketMatchDetailPubSub from './app/playcricket-MatchDetailImport/pubsub/playcricketMatchListCompare';
+import * as GetPlayCricketMatchDetailPubSub from './app/playcricket-MatchDetailImport/pubsub/getPlayCricketMatchDetails';
+import * as HttpPublishPlayCricetMatchToImport from './app/playcricket-MatchDetailImport/http/httpTriggerPubSubPlayCricketImport'
+
+/**
+ * Import: PlayCricket Player Stats Functions
+ */
+
+import * as GetPlayerStatsPubSub from './app/player-stats/pubsub/player-stats'
 
 
 export const helloWorld = functions
@@ -56,3 +61,11 @@ export const getPlayCricketMatchListPubSub = GetPlayCricketMatchListPubSub.getPl
 export const comparePlayCricketMatchListubSub = ComparePlayCricketMatchDetailPubSub.comparePlayCricketMatchListPubSub;
 export const getPlayCricketMatchDetailPubSub = GetPlayCricketMatchDetailPubSub.getPlayCricketMatchDetailPubSub;
 export const httpPublishPlayCricetMatchToImport = HttpPublishPlayCricetMatchToImport.httpPublishPlayCricetMatchToImport;
+
+
+
+/**
+ * Import: PlayCricket Player Stats Functions
+ */
+
+export const getPlayerStatsPubSub = GetPlayerStatsPubSub.getPlayerStatsPubSub;
