@@ -1,4 +1,5 @@
 {
+  "name": "match-interfaces",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/match-interfaces/src",
   "projectType": "library",
@@ -12,7 +13,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/match-interfaces"],
+      "outputs": ["{workspaceRoot}/coverage/libs/match-interfaces"],
       "options": {
         "jestConfig": "libs/match-interfaces/jest.config.ts",
         "passWithNoTests": true
