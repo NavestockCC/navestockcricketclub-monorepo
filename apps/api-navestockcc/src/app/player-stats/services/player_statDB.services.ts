@@ -1,5 +1,5 @@
 import { getFirestore, WriteResult } from 'firebase-admin/firestore';
-import { from, map, Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 
 import { PlayerStatsMatch } from '@navestockcricketclub/match-interfaces';
 

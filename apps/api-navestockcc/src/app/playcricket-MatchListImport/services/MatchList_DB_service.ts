@@ -4,7 +4,7 @@ import { Observable,from} from 'rxjs';
 export class MatchListDB {
 
 
-  public addMatchlist(matchlist: any): Observable<WriteResult> {
+  public addMatchlist(matchlist): Observable<WriteResult> {
     const afs = getFirestore();
     const collectionDB = 'MatchList';
 

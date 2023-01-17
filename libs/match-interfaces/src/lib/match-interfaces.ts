@@ -38,6 +38,7 @@ interface MatchlistPlaycricketAPIRespone {
 interface MatchDetailPlaycricketAPIRespone {
   status: number;
   statusText: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: { match_details: any[] };
 }
 

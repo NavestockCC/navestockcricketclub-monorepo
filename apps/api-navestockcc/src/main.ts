@@ -29,7 +29,6 @@ import * as HttpPublishPlayCricetMatchToImport from './app/playcricket-MatchDeta
 
 import * as GetPlayerStatsPubSub from './app/player-stats/pubsub/player-stats'
 
-
 export const helloWorld = functions
 .region('europe-west2')
 .https.onRequest((request, response) => {

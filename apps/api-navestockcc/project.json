@@ -78,7 +78,7 @@
         "commands": [
           "lsof -t -i:9099 -i:5001 -i:8080 -i:5002 -i:8085 -i:9199 | xargs kill -9",
           "nx run api-navestockcc:build:production",
-          "firebase emulators:start"
+          "firebase --debug emulators:start"
         ],
         "color": true,
         "parallel": false
@@ -89,7 +89,7 @@
       "options": {
         "commands": [
           "nx run api-navestockcc:build:production",
-          "firebase deploy --only functions"
+          "firebase deploy --debug  --only functions"
         ],
         "color": true,
         "parallel": false

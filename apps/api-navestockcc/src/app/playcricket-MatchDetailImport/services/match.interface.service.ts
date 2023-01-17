@@ -109,17 +109,19 @@ export class MatchInterfaceServices {
    * @param match <any>
    * @returns match description
    */
-  public updateMatchDescription(match: any): MatchDescription {
+  public updateMatchDescription(match: unknown): MatchDescription {
 
-    let mdo: any = {};
+    const mdot:unknown = {};
     //Transform API respone to MatchDescription
     for (const [k, v] of Object.entries(match)) {
       if (typeof v != 'object') {
         if (v != undefined && v != '') {
-          mdo[k] = v;
+          mdot[k] = v;
         }
       }
     }
+
+    let mdo:MatchDescription = <MatchDescription> mdot
 
     // Remove all HTM tags from match_notes
     if (mdo.match_notes != undefined) {
@@ -159,7 +161,7 @@ export class MatchInterfaceServices {
    * @param {*} match
    * @returns {Observable<MatchDescription>}
    */
-  public updateMatchDescription_Observable(match: any): Observable<MatchDescription> {
+  public updateMatchDescription_Observable(match: unknown): Observable<MatchDescription> {
 
     const matchObservable = new Observable((sbscriber) => {
       sbscriber.next(match);
@@ -228,7 +230,9 @@ export class MatchInterfaceServices {
    * @param {*} match
    * @returns {Innings[]}
    */
-  public innings(match: any): Innings[] {
+  public innings(match): Innings[] {
+
+    //const match = <Match> matchParam
 
     let mdo: [] = [];
 
@@ -272,7 +276,7 @@ export class MatchInterfaceServices {
     return iArray;
   }
 
-  public innings_Observable(match: unknown): Observable<Innings[]> {
+  public innings_Observable(match): Observable<Innings[]> {
     const matchObservable = new Observable((sbscriber) => {
       sbscriber.next(match);
       sbscriber.complete;
@@ -280,7 +284,8 @@ export class MatchInterfaceServices {
     );
 
     return matchObservable.pipe(
-      map(match => match as any),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      map(match => <any>match),
       map((match) => {
         if (Array.isArray(match.innings) && match.innings.length) {
           const teamsData = {};
@@ -334,6 +339,7 @@ export class MatchInterfaceServices {
    * @param {*} inningsData
    * @returns {InningsDescription}
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private inningsDescription(inningsData: any): InningsDescription {
     const ido = {};
     for (const [k, v] of Object.entries(inningsData)) {
@@ -365,6 +371,7 @@ export class MatchInterfaceServices {
    * @param {*} inningsData
    * @returns {Bat[]}
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private inningsBat(inningsData: any): Bat[] {
     const ido: Bat[] = [];
     if (Array.isArray(inningsData.bat) && inningsData.bat.length) {
@@ -409,6 +416,7 @@ export class MatchInterfaceServices {
    * @param {*} inningsData
    * @returns {Bowl[]}
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private inningBowl(inningsData: any): Bowl[] {
     const ido: Bowl[] = [];
     if (Array.isArray(inningsData.bowl) && inningsData.bowl.length) {
@@ -453,6 +461,7 @@ export class MatchInterfaceServices {
    * @param {*} inningsData
    * @returns {FallOfWickets[]}
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private inningFallOfWickets(inningsData: any): FallOfWickets[] {
     const ido: FallOfWickets[] = [];
     if (Array.isArray(inningsData.fow) && inningsData.fow.length) {
