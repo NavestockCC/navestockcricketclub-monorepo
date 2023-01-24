@@ -9,7 +9,7 @@
  */
 
 
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 import { MatchList } from '@navestockcricketclub/match-interfaces';
 
 import { ComparisonService } from '../services/comparison.service';

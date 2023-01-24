@@ -5,23 +5,22 @@
  * 
  */
 
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v2/pubsub';
 import {getFirestore} from 'firebase-admin/firestore'
 
 
 export const listenHelloNavestock = functions
-.region('europe-west2')
-.pubsub
-    .topic('Test_Message')
-    .onPublish(msgPayload => {
-        if (msgPayload.json.msg === undefined) {
+.onMessagePublished(
+    'Test_Message',
+   msgPayload => {
+        if (msgPayload.data.message.json === undefined) {
             console.error(new Error('E_getPCML_1: msg param not found'));
             return 'listenHelloNavestock_PubSub: excution ERROR!!!';
         } else {
                     const afs = getFirestore(); // Crearte an instanse of Firestore
-                    afs.collection('TEST').add(msgPayload.json);
+                    afs.collection('TEST').add(msgPayload.data.message.json);
 
         return 'listenHelloNavestock_PubSub: excution completed sucsesfully';
         }
     }
-    )
+    );

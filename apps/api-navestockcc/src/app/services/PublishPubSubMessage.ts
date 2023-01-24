@@ -1,6 +1,6 @@
 import { PubSub } from '@google-cloud/pubsub';
 import { catchError, from, map, throwError, retry, switchMap } from 'rxjs';
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 
 export class PublishPubSubMessage {
   /**

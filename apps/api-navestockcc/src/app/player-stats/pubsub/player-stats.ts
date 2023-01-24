@@ -6,7 +6,7 @@
  * @description
  */
 
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 import { Match } from '@navestockcricketclub/match-interfaces';
 import { PlayerStatsService } from '../services/player_stats.service';
 

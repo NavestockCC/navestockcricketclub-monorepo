@@ -7,7 +7,7 @@
  */
 
 
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 import { forkJoin, lastValueFrom, map, switchMap } from 'rxjs';
 
 import { MatchInterfaceServices } from '../services/match.interface.service';

@@ -6,7 +6,7 @@
  * @description matchListImport Function subscribes to Match_List_Import. Will use the season data to start import of PlayCricket Data.
  *
  */
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 import { PublishPubSubMessage } from '../../services/PublishPubSubMessage'
 
 

@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "test-navestock-website"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }
