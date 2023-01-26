@@ -111,7 +111,7 @@ interface Match {
  * @field {string} navestock_club_name? - Navestock club name
  * @field {string} navestock_team_name? - Navestock team name
  * @field {string} navestock_team_id?  - Navestock team ID
- * @field {string} navestock_club_id? - Navestock club ID 
+ * @field {string} navestock_club_id? - Navestock club ID
  * @field {string} opposition_club_name? - Opposition club name
  * @field {string} opposition_team_name? - Opposition team name
  * @field {string} opposition_team_id? - Opposition team ID
@@ -320,7 +320,6 @@ interface PlayerStats {
   bowl?: Bowl;
 }
 
-
 /**
  * Description placeholder
  * @date 1/3/2023 - 12:04:29 PM
@@ -328,9 +327,9 @@ interface PlayerStats {
  * @interface PlayerStatsMatch
  * @typedef {PlayerStatsMatch}
  * @extends {PlayerStats}
- * 
+ *
  * @field {MatchDescription} matchdescription
  */
-interface PlayerStatsMatch extends PlayerStats{
+interface PlayerStatsMatch extends PlayerStats {
   matchdescription: MatchDescription;
 }

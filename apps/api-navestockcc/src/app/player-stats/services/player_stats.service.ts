@@ -1,4 +1,10 @@
-import { Match, MatchDescription, Bat, Bowl, PlayerStats } from '@navestockcricketclub/match-interfaces';
+import {
+  Match,
+  MatchDescription,
+  Bat,
+  Bowl,
+  PlayerStats,
+} from '@navestockcricketclub/match-interfaces';
 import {
   map,
   of,
@@ -8,22 +14,19 @@ import {
   merge,
   filter,
   groupBy,
-  reduce
+  reduce,
 } from 'rxjs';
 
 export class PlayerStatsService {
-
-
   /**
    * Matchs description$
-   * @param match 
+   * @param match
    * @returns MatchDescription of the Match object
    */
   public matchDescription$(match: Match): Observable<MatchDescription> {
     return of(match.description);
   }
 
-  
   /**
    * Function to parse the part of the player stats data object
    * @date 1/7/2023 - 11:25:50 AM
@@ -32,7 +35,9 @@ export class PlayerStatsService {
    * @param {Match} match
    * @returns {Observable<{player_id: string, bat?: Bat, bowl?: Bowl}>}
    */
-  public playerStats$(match: Match): Observable<{player_id: string, bat?: Bat, bowl?: Bowl}> {
+  public playerStats$(
+    match: Match
+  ): Observable<{ player_id: string; bat?: Bat; bowl?: Bowl }> {
     const match$ = of(match.innings);
 
     return match$.pipe(

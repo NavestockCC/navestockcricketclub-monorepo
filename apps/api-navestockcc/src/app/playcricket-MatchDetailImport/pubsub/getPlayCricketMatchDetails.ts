@@ -6,7 +6,6 @@
  * @description Data retrieved from the Play Cricket Api is transformed in to an Object:Match and written to the Firestore Fixtures collection
  */
 
-
 import * as functions from 'firebase-functions/v1';
 import { forkJoin, lastValueFrom, map, switchMap } from 'rxjs';
 
@@ -56,21 +55,21 @@ export const getPlayCricketMatchDetailPubSub = functions
           } as Match)
       ),
       switchMap((mData) =>
-      forkJoin({
-        matchDetailPubsubPublish: psMessage.publishPubSubMessage(
-          'PlayCricket_Match_Details_Data',
-          mData
-        ),
-        matchDetailDBWrite: MLI.updateMatchDetails(mData),
-      })
-    )
+        forkJoin({
+          matchDetailPubsubPublish: psMessage.publishPubSubMessage(
+            'PlayCricket_Match_Details_Data',
+            mData
+          ),
+          matchDetailDBWrite: MLI.updateMatchDetails(mData),
+        })
+      )
     );
 
     /**
      * Resolve function performing the asynchronous processing
      * (also known as "background functions") by returning a JavaScript promise.
      */
-    return await lastValueFrom(getPCMatchDetail).catch(
-      e => functions.logger.debug(`getPlayCricketMatchDetailPubSub: ${e}`)
+    return await lastValueFrom(getPCMatchDetail).catch((e) =>
+      functions.logger.debug(`getPlayCricketMatchDetailPubSub: ${e}`)
     );
   });

@@ -6,7 +6,6 @@ import { PlayerStatsMatch } from '@navestockcricketclub/match-interfaces';
 export class PlayerStatsDBService {
   afs = getFirestore();
 
-
   /**
    * Function to update Player Stats information in the Firestore DB
    * @date 1/4/2023 - 1:23:45 PM
@@ -25,5 +24,4 @@ export class PlayerStatsDBService {
       .doc(playerStatsData.matchdescription.id.toString());
     return from(playerStatsDocPath.set(playerStatsData, { merge: true }));
   }
-
 }

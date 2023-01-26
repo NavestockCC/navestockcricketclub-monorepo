@@ -6,5 +6,8 @@
     "match-interfaces": "libs/match-interfaces",
     "navestock-website": "apps/navestock-website",
     "navestock-website-e2e": "apps/navestock-website-e2e"
+  },
+  "cli": {
+    "analytics": false
   }
 }

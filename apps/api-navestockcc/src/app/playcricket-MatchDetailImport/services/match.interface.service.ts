@@ -1,6 +1,6 @@
 import { Timestamp } from 'firebase-admin/firestore';
 import { map, Observable } from 'rxjs';
-import * as stripTags from 'striptags'
+import * as stripTags from 'striptags';
 
 import {
   MatchDescription,
@@ -8,7 +8,7 @@ import {
   Innings,
   Bat,
   Bowl,
-  FallOfWickets
+  FallOfWickets,
 } from '@navestockcricketclub/match-interfaces';
 
 export class MatchInterfaceServices {
@@ -65,8 +65,8 @@ export class MatchInterfaceServices {
     return returnVal;
   }
 
-  private setSeason(matchDate: string): string{
-    return matchDate.substr(matchDate.length-4, 4);
+  private setSeason(matchDate: string): string {
+    return matchDate.substr(matchDate.length - 4, 4);
   }
 
   /**
@@ -79,7 +79,6 @@ export class MatchInterfaceServices {
     dateString: string,
     timeString?: string
   ): Timestamp {
-
     //Convert string t date
     const splitDate: string[] = dateString.split('/');
 
@@ -91,13 +90,13 @@ export class MatchInterfaceServices {
     // Create JS Date
     const dateObject = new Date(
       splitDate[2] +
-      '-' +
-      splitDate[1] +
-      '-' +
-      splitDate[0] +
-      'T' +
-      timeString +
-      ':00+01:00'
+        '-' +
+        splitDate[1] +
+        '-' +
+        splitDate[0] +
+        'T' +
+        timeString +
+        ':00+01:00'
     );
 
     //Convert JS Date to Firestore Timestamp
@@ -110,8 +109,7 @@ export class MatchInterfaceServices {
    * @returns match description
    */
   public updateMatchDescription(match: unknown): MatchDescription {
-
-    const mdot:unknown = {};
+    const mdot: unknown = {};
     //Transform API respone to MatchDescription
     for (const [k, v] of Object.entries(match)) {
       if (typeof v != 'object') {
@@ -121,7 +119,7 @@ export class MatchInterfaceServices {
       }
     }
 
-    let mdo:MatchDescription = <MatchDescription> mdot
+    let mdo: MatchDescription = <MatchDescription>mdot;
 
     // Remove all HTM tags from match_notes
     if (mdo.match_notes != undefined) {
@@ -138,21 +136,20 @@ export class MatchInterfaceServices {
 
     //Set date fields to Firebase Timestamps
     if (mdo.last_updated != undefined) {
-      mdo.last_updated_timestamp =
-        this.updateStringDateToFirebaseTimestamp(mdo.last_updated);
+      mdo.last_updated_timestamp = this.updateStringDateToFirebaseTimestamp(
+        mdo.last_updated
+      );
     }
     if (mdo.match_date != undefined) {
-      mdo.match_date_timestamp =
-        this.updateStringDateToFirebaseTimestamp(
-          mdo.match_date,
-          mdo.match_time
-        );
+      mdo.match_date_timestamp = this.updateStringDateToFirebaseTimestamp(
+        mdo.match_date,
+        mdo.match_time
+      );
     }
 
-    return mdo
+    return mdo;
   }
 
-  
   /**
    * Observabe version of the updateMatchDescription function
    * @date 1/7/2023 - 4:32:02 PM
@@ -161,14 +158,13 @@ export class MatchInterfaceServices {
    * @param {*} match
    * @returns {Observable<MatchDescription>}
    */
-  public updateMatchDescription_Observable(match: unknown): Observable<MatchDescription> {
-
+  public updateMatchDescription_Observable(
+    match: unknown
+  ): Observable<MatchDescription> {
     const matchObservable = new Observable((sbscriber) => {
       sbscriber.next(match);
       sbscriber.complete;
-    }
-    );
-
+    });
 
     return matchObservable.pipe(
       //Transform API matchonse to MatchDescription
@@ -196,7 +192,7 @@ export class MatchInterfaceServices {
           mtchData.season = this.setSeason(mtchData.match_date);
         }
         return mtchData as MatchDescription;
-    }),
+      }),
       //Set Navestock and Opposition team attributes
       map((mtchData) => {
         return this.setNavestockAndOppositionAttributes(mtchData);
@@ -219,7 +215,6 @@ export class MatchInterfaceServices {
     );
   }
 
-
   /**
    * Parse and Array of innings from the Match Object
    * Enrich the innings data with home & away team information
@@ -231,11 +226,9 @@ export class MatchInterfaceServices {
    * @returns {Innings[]}
    */
   public innings(match): Innings[] {
-
     //const match = <Match> matchParam
 
     let mdo: [] = [];
-
 
     if (Array.isArray(match.innings) && match.innings.length) {
       const teamsData = {};
@@ -245,7 +238,7 @@ export class MatchInterfaceServices {
         club_id: match.home_club_id,
         club_name: match.home_club_name,
         opposition_id: match.away_team_id,
-        match_id: match.id
+        match_id: match.id,
       };
       teamsData[match.away_team_id] = {
         team_id: match.away_team_id,
@@ -253,7 +246,7 @@ export class MatchInterfaceServices {
         club_id: match.away_club_id,
         club_name: match.away_club_name,
         opposition_id: match.home_team_id,
-        match_id: match.id
+        match_id: match.id,
       };
 
       for (let i = 0; i < match.innings.length; i++) {
@@ -280,12 +273,11 @@ export class MatchInterfaceServices {
     const matchObservable = new Observable((sbscriber) => {
       sbscriber.next(match);
       sbscriber.complete;
-    }
-    );
+    });
 
     return matchObservable.pipe(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      map(match => <any>match),
+      map((match) => <any>match),
       map((match) => {
         if (Array.isArray(match.innings) && match.innings.length) {
           const teamsData = {};
@@ -295,7 +287,7 @@ export class MatchInterfaceServices {
             club_id: match.home_club_id,
             club_name: match.home_club_name,
             opposition_id: match.away_team_id,
-            match_id: match.id
+            match_id: match.id,
           };
           teamsData[match.away_team_id] = {
             team_id: match.away_team_id,
@@ -303,7 +295,7 @@ export class MatchInterfaceServices {
             club_id: match.away_club_id,
             club_name: match.away_club_name,
             opposition_id: match.home_team_id,
-            match_id: match.id
+            match_id: match.id,
           };
 
           for (let i = 0; i < match.innings.length; i++) {
@@ -329,7 +321,6 @@ export class MatchInterfaceServices {
     );
   }
 
-  
   /**
    * Parse innings data into {InningsDescription} interface
    * Enrich Innings description with attributes for teams and clubs
@@ -350,18 +341,24 @@ export class MatchInterfaceServices {
       }
     }
     //Add additional attributes for teams and clubs
-    ido['team_batting_name'] = inningsData.teams[inningsData['team_batting_id']].team_name;
-    ido['club_batting_id'] = inningsData.teams[inningsData['team_batting_id']].club_id;
-    ido['club_batting_name'] = inningsData.teams[inningsData['team_batting_id']].club_name;
-    ido['team_bowling_id'] = inningsData.teams[inningsData['team_batting_id']].opposition_id;
-    ido['team_bowling_name'] = inningsData.teams[ido['team_bowling_id']].team_name;
+    ido['team_batting_name'] =
+      inningsData.teams[inningsData['team_batting_id']].team_name;
+    ido['club_batting_id'] =
+      inningsData.teams[inningsData['team_batting_id']].club_id;
+    ido['club_batting_name'] =
+      inningsData.teams[inningsData['team_batting_id']].club_name;
+    ido['team_bowling_id'] =
+      inningsData.teams[inningsData['team_batting_id']].opposition_id;
+    ido['team_bowling_name'] =
+      inningsData.teams[ido['team_bowling_id']].team_name;
     ido['club_bowling_id'] = inningsData.teams[ido['team_bowling_id']].club_id;
-    ido['club_bowling_name'] = inningsData.teams[ido['team_bowling_id']].club_name;
-    ido['match_id'] = inningsData.teams[inningsData['team_batting_id']].match_id;
+    ido['club_bowling_name'] =
+      inningsData.teams[ido['team_bowling_id']].club_name;
+    ido['match_id'] =
+      inningsData.teams[inningsData['team_batting_id']].match_id;
     return ido as InningsDescription;
   }
 
-  
   /**
    * Parse innings data into {Bat} interface
    * Enrich Innings description with attributes for teams and clubs
@@ -386,28 +383,37 @@ export class MatchInterfaceServices {
         }
         //Add additional attributes for teams and clubs
         idbo['type'] = 'bat';
-        if('batsman_id' in idbo){
+        if ('batsman_id' in idbo) {
           idbo['player_id'] = idbo['batsman_id'];
         }
-        if('batsman_name' in idbo){
+        if ('batsman_name' in idbo) {
           idbo['player_name'] = idbo['batsman_name'];
         }
-        idbo['club_id'] = inningsData.teams[inningsData['team_batting_id']].club_id;
-        idbo['club_name'] = inningsData.teams[inningsData['team_batting_id']].club_name;
-        idbo['team_id'] = inningsData.teams[inningsData['team_batting_id']].team_id;
-        idbo['team_name'] = inningsData.teams[inningsData['team_batting_id']].team_name;
-        idbo['team_bowling_id'] = inningsData.teams[inningsData['team_batting_id']].opposition_id;
-        idbo['club_bowling_id'] = inningsData.teams[idbo['team_bowling_id']].club_id;
-        idbo['club_bowling_name'] = inningsData.teams[idbo['team_bowling_id']].club_name;
-        idbo['team_bowling_name'] = inningsData.teams[idbo['team_bowling_id']].team_name;
-        idbo['match_id'] = inningsData.teams[inningsData['team_batting_id']].match_id;
+        idbo['club_id'] =
+          inningsData.teams[inningsData['team_batting_id']].club_id;
+        idbo['club_name'] =
+          inningsData.teams[inningsData['team_batting_id']].club_name;
+        idbo['team_id'] =
+          inningsData.teams[inningsData['team_batting_id']].team_id;
+        idbo['team_name'] =
+          inningsData.teams[inningsData['team_batting_id']].team_name;
+        idbo['team_bowling_id'] =
+          inningsData.teams[inningsData['team_batting_id']].opposition_id;
+        idbo['club_bowling_id'] =
+          inningsData.teams[idbo['team_bowling_id']].club_id;
+        idbo['club_bowling_name'] =
+          inningsData.teams[idbo['team_bowling_id']].club_name;
+        idbo['team_bowling_name'] =
+          inningsData.teams[idbo['team_bowling_id']].team_name;
+        idbo['match_id'] =
+          inningsData.teams[inningsData['team_batting_id']].match_id;
         ido.push(idbo as Bat);
       });
     }
     return ido;
   }
 
-    /**
+  /**
    * Parse innings data into {Bowl} interface
    * Enrich Innings description with attributes for teams and clubs
    * @date 1/7/2023 - 4:49:33 PM
@@ -431,28 +437,34 @@ export class MatchInterfaceServices {
         }
         //Add additional attributes for teams and clubs
         idbo['type'] = 'bowl';
-        if('bowler_id' in idbo){
+        if ('bowler_id' in idbo) {
           idbo['player_id'] = idbo['bowler_id'];
         }
-        if('bowler_name' in idbo){
+        if ('bowler_name' in idbo) {
           idbo['player_name'] = idbo['bowler_name'];
         }
-        idbo['club_batting_id'] = inningsData.teams[inningsData['team_batting_id']].club_id;
-        idbo['club_batting_name'] = inningsData.teams[inningsData['team_batting_id']].club_name;
-        idbo['team_batting_id'] = inningsData.teams[inningsData['team_batting_id']].team_id;
-        idbo['team_batting_name'] = inningsData.teams[inningsData['team_batting_id']].team_name;
-        idbo['team_id'] = inningsData.teams[inningsData['team_batting_id']].opposition_id;
+        idbo['club_batting_id'] =
+          inningsData.teams[inningsData['team_batting_id']].club_id;
+        idbo['club_batting_name'] =
+          inningsData.teams[inningsData['team_batting_id']].club_name;
+        idbo['team_batting_id'] =
+          inningsData.teams[inningsData['team_batting_id']].team_id;
+        idbo['team_batting_name'] =
+          inningsData.teams[inningsData['team_batting_id']].team_name;
+        idbo['team_id'] =
+          inningsData.teams[inningsData['team_batting_id']].opposition_id;
         idbo['club_id'] = inningsData.teams[idbo['team_id']].club_id;
         idbo['club_name'] = inningsData.teams[idbo['team_id']].club_name;
         idbo['team_name'] = inningsData.teams[idbo['team_id']].team_name;
-        idbo['match_id'] = inningsData.teams[inningsData['team_batting_id']].match_id;
+        idbo['match_id'] =
+          inningsData.teams[inningsData['team_batting_id']].match_id;
         ido.push(idbo as Bowl);
       });
     }
     return ido;
   }
 
-      /**
+  /**
    * Parse innings data into {FallOfWickets} interface
    * Enrich Innings description with attributes for teams and clubs
    * @date 1/7/2023 - 4:49:33 PM
@@ -475,23 +487,30 @@ export class MatchInterfaceServices {
           }
         }
         //Add additional attributes for teams and clubs
-        idbo['club_batting_id'] = inningsData.teams[inningsData['team_batting_id']].club_id;
-        idbo['club_batting_name'] = inningsData.teams[inningsData['team_batting_id']].club_name;
-        idbo['team_batting_id'] = inningsData.teams[inningsData['team_batting_id']].team_id;
-        idbo['team_batting_name'] = inningsData.teams[inningsData['team_batting_id']].team_name;
-        idbo['team_bowling_id'] = inningsData.teams[inningsData['team_batting_id']].opposition_id;
-        idbo['club_bowling_id'] = inningsData.teams[idbo['team_bowling_id']].club_id;
-        idbo['club_bowling_name'] = inningsData.teams[idbo['team_bowling_id']].club_name;
-        idbo['team_bowling_name'] = inningsData.teams[idbo['team_bowling_id']].team_name;
-        idbo['match_id'] = inningsData.teams[inningsData['team_batting_id']].match_id;
+        idbo['club_batting_id'] =
+          inningsData.teams[inningsData['team_batting_id']].club_id;
+        idbo['club_batting_name'] =
+          inningsData.teams[inningsData['team_batting_id']].club_name;
+        idbo['team_batting_id'] =
+          inningsData.teams[inningsData['team_batting_id']].team_id;
+        idbo['team_batting_name'] =
+          inningsData.teams[inningsData['team_batting_id']].team_name;
+        idbo['team_bowling_id'] =
+          inningsData.teams[inningsData['team_batting_id']].opposition_id;
+        idbo['club_bowling_id'] =
+          inningsData.teams[idbo['team_bowling_id']].club_id;
+        idbo['club_bowling_name'] =
+          inningsData.teams[idbo['team_bowling_id']].club_name;
+        idbo['team_bowling_name'] =
+          inningsData.teams[idbo['team_bowling_id']].team_name;
+        idbo['match_id'] =
+          inningsData.teams[inningsData['team_batting_id']].match_id;
         ido.push(idbo as FallOfWickets);
       });
     }
     return ido;
   }
 
-
-  
   /**
    * Ensure attributes are of the correct type according to the interface specification
    * @date 1/7/2023 - 4:53:12 PM
@@ -507,8 +526,12 @@ export class MatchInterfaceServices {
     attributeValue: string | number | boolean | unknown,
     attributeKey: string
   ): string | number | boolean {
-    const interfaceObjectSamples: { bat: Bat, bowl: Bowl, fow: FallOfWickets, description: InningsDescription } =
-    {
+    const interfaceObjectSamples: {
+      bat: Bat;
+      bowl: Bowl;
+      fow: FallOfWickets;
+      description: InningsDescription;
+    } = {
       bat: {
         position: 0,
         batsman_name: '',
@@ -543,10 +566,10 @@ export class MatchInterfaceServices {
         batsman_in_runs: 0,
       },
       description: {
-        team_batting_name: "",
-        team_batting_id: "",
-        team_bowling_name: "",
-        team_bowling_id: "",
+        team_batting_name: '',
+        team_batting_id: '',
+        team_bowling_name: '',
+        team_bowling_id: '',
         innings_number: 0,
         extra_byes: 0,
         extra_leg_byes: 0,
@@ -562,8 +585,8 @@ export class MatchInterfaceServices {
         declared: true,
         revised_target_runs: 0,
         revised_target_overs: 0,
-        revised_target_balls: 0
-      }
+        revised_target_balls: 0,
+      },
     };
 
     let returnAttributeValue;

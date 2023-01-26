@@ -8,36 +8,32 @@
  */
 
 import * as functions from 'firebase-functions/v1';
-import { PublishPubSubMessage } from '../../services/PublishPubSubMessage'
-
+import { PublishPubSubMessage } from '../../services/PublishPubSubMessage';
 
 export const httpPublishPlayCricetMatchToImport = functions
-.region('europe-west2')
-.runWith({ memory: '128MB', timeoutSeconds: 120 })
-.https
-.onRequest(
-  async (req, res) => {
+  .region('europe-west2')
+  .runWith({ memory: '128MB', timeoutSeconds: 120 })
+  .https.onRequest(async (req, res) => {
+    // Retrieve data from season Param, then package to {JSON} message and push to buffer.
+    if (req.query.mid === undefined) {
+      const d = new Date();
+      req.query.season = d.getFullYear().toString();
+    }
 
-      // Retrieve data from season Param, then package to {JSON} message and push to buffer.
-      if (req.query.mid === undefined){
-        const d = new Date();
-        req.query.season = d.getFullYear().toString();
-      }
-
-      const matchToImport = req.query.mid;
-      const data = JSON.stringify({matchid: matchToImport});
-      const publishMes = new PublishPubSubMessage();
-      publishMes.publishPubSubMessage('Match_Detail_Import', data)
-      .subscribe({
-        next: (v) => {
-          functions.logger.debug( `PubSub Message ${v} published to topic Match_Detail_Import`);
-          res.send(`Message ${v} published to Match_Detail_Import`);
-        },
-        error: (e) => {
-          console.error(JSON.stringify(e));
-          res.send(JSON.stringify(e));
-        },
-        complete: () => console.info('published to topic Match_Detail_Import'),
-      });
-  }
-);
+    const matchToImport = req.query.mid;
+    const data = JSON.stringify({ matchid: matchToImport });
+    const publishMes = new PublishPubSubMessage();
+    publishMes.publishPubSubMessage('Match_Detail_Import', data).subscribe({
+      next: (v) => {
+        functions.logger.debug(
+          `PubSub Message ${v} published to topic Match_Detail_Import`
+        );
+        res.send(`Message ${v} published to Match_Detail_Import`);
+      },
+      error: (e) => {
+        console.error(JSON.stringify(e));
+        res.send(JSON.stringify(e));
+      },
+      complete: () => console.info('published to topic Match_Detail_Import'),
+    });
+  });

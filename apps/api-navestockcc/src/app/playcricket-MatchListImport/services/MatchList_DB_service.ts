@@ -1,13 +1,10 @@
-import {getFirestore, WriteResult} from 'firebase-admin/firestore';
-import { Observable,from} from 'rxjs';
+import { getFirestore, WriteResult } from 'firebase-admin/firestore';
+import { Observable, from } from 'rxjs';
 
 export class MatchListDB {
-
-
   public addMatchlist(matchlist): Observable<WriteResult> {
     const afs = getFirestore();
     const collectionDB = 'MatchList';
-
 
     if (matchlist.season === undefined) {
       matchlist.season = new Date().getFullYear();
@@ -15,6 +12,6 @@ export class MatchListDB {
 
     const documentDB = matchlist.season;
 
-    return from(afs.collection(collectionDB).doc(documentDB).set(matchlist))
+    return from(afs.collection(collectionDB).doc(documentDB).set(matchlist));
   }
 }
